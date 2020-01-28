@@ -1,0 +1,20 @@
+{
+  "name": "seko_chat",
+  "version": "1.0.0",
+  "description": "Application writen to test skills",
+  "main": "server.js",
+  "scripts": {
+    "devStart": "nodemon server.js"
+  },
+  "author": "EJ",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "install": "^0.13.0",
+    "path": "^0.12.7",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
