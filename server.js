@@ -2,11 +2,12 @@ var express = require('express');
 var app = express();
 var path = require('path');
 
+const port = process.env.PORT || 3000;
 //Send static files
 app.use(express.static(__dirname + '/static'));
 
 //HTTP Server
-var server = app.listen(80,()=> console.log("Serwer uruchomiony na porcie 80"));
+var server = app.listen(port,()=> console.log("Serwer uruchomiony na porcie 80"));
 app.get('/', (req,res )=> {
     res.sendFile(path.join(__dirname,'/chat.html'));
 })
