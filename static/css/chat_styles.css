@@ -4,6 +4,7 @@
     width: 80%;
     height: 85%;
     max-height: 85%;
+    min-height: 50%;
     position: absolute;
     left: 1%;
     top: 1%;
@@ -53,7 +54,7 @@
     position: absolute;
     width: 85%;
     top: 12.5%;
-    font-size: 1.5vw;
+    font-size: 15px;
     padding-top: 0;
     padding-left: 1%;
     
@@ -69,34 +70,6 @@
     font-size: 1vw;
     padding: 0;
     }
-    h2
-    {
-    font-size: 1.3vw;
-    text-align: left;
-    left: 10%;    
-    }
-    .nick_input
-    {
-    display: inline-block;
-    position: absolute;
-    width: 60%;
-    font-size: 1vw;
-    margin-left: 3%;
-    padding-left: 2%;
-    height: 10%;
-
-    }
-    .nick_set_button
-    {
-    display: inline-block;
-    position: absolute;
-    width:30%;
-    right: 3%; 
-    font-size: 1vw;
-    padding-left: 0;
-    padding-right: 0;
-    
-    }
     .chat_list
     {
     margin: 1%;
@@ -105,10 +78,6 @@
     overflow-y: scroll;
     word-wrap: break-word;
     max-height: 100%;
-    font-size: 1.5vw;
+    font-size: 15px;
     list-style-type: none;
-    }
-    #nick_label
-    {
-    margin-left: 3%;
     }
