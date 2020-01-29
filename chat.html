@@ -10,25 +10,47 @@
     <title>AF SEKO - czat</title>
   </head>
   <body class="bg-dark">
-    <div class="container-fluid chat_div rounded-lg">Pierwsze okno</div>
-    <div class="container-fluid users_div rounded-lg">
+    <div class="container-fluid p-0 chat_div rounded-lg">
+      <ul class="chat_list">
+        <li>Cras justo odio</li>
+        <li>Dapibus ac facilisis in</li>
+        <li>Cras justo odio</li>
+        <li>Dapibus ac facilisis in</li>
+        <li>Cras justo odio</li>
+        <li>Dapibus ac facilisis in</li>
+        <li>Cras justo odaaaaaaaaaaaaaaaaaaaaaaaaaaaaawsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaio</li>
+        <li>Dapibus ac facilisis in</li>
+      </ul>
+    </div>
+    <div class="container-fluid p-0 users_div rounded-lg">
         <h1>UŻYTKOWNICY</h1>
     </div>
-    <div class="container-fluid send_div rounded-lg">
-        <textarea class="form-control message_input h-75" id="exampleFormControlTextarea1"></textarea>
-        <button type="submit" class="btn btn-warning button_send mb-2">Wyślij</button>
+    <div class="container-fluid p-0 send_div rounded-lg">
+        <textarea class="form-control message_input h-75" id="exampleFormControlTextarea1"placeholder="Napisz wiadomość.."></textarea>
+        <button type="submit" class="btn btn-warning button_send ">Wyślij</button>
     </div>
-    <div class="container-fluid settings_div rounded-lg">
+    <div class="container-fluid p-0 settings_div rounded-lg">
         <h1>USTAWIENIA</h1>
+        <h2 id="nick_label">Twój podpis: </h2>
+        <textarea class="form-control nick_input " id="exampleFormControlTextarea1" rows="1" placeholder="Podpis.."></textarea>
+        <button type="submit" class="btn btn-warning nick_set_button ">Ustaw</button>
     </div>
   </body>
 </html>
+<script>
+  var list = document.getElementsByClassName('chat_list')[0];
+  var wiersz = document.createElement('li');
+  wiersz.appendChild(document.createTextNode("Eryk: To jest tekst wstawiony przez JavaScript o kolorze białym"));
+  wiersz.style.color = 'white';
+  list.appendChild(wiersz);
+</script>
 <style>
    .chat_div
     {
     display: inline-block;
     width: 80%;
     height: 85%;
+    max-height: 85%;
     position: absolute;
     left: 1%;
     top: 1%;
@@ -49,6 +71,7 @@
     display: inline-block;
     width: 80%;
     height: 10%;
+    min-height: 40px;
     position: absolute;
     left: 1%;
     top: 88%;
@@ -59,6 +82,7 @@
     display: inline-block;
     width: 17%;
     height: 50%;
+    min-height: 70px;
     position: absolute;
     right: 1%;
     top: 48%;
@@ -66,15 +90,20 @@
     }
     h1
     {
-    font-size: 170%;
+    font-size: 2vw;
     text-align: center;
     }
     .message_input
     {
+    margin-left: 1%;
     display: inline-block;
     position: absolute;
     width: 85%;
     top: 12.5%;
+    font-size: 1vw;
+    padding-top: 0;
+    padding-left: 1%;
+    
     }
     .button_send
     {
@@ -84,6 +113,51 @@
     width:10%;
     height: 70%;
     right: 2%;   
+    font-size: 1vw;
+    padding: 0;
+    }
+    h2
+    {
+    font-size: 1.3vw;
+    text-align: left;
+    left: 10%;    
+    }
+    .nick_input
+    {
+    display: inline-block;
+    position: absolute;
+    width: 60%;
+    font-size: 1vw;
+    margin-left: 3%;
+    padding-left: 2%;
+    height: 10%;
+
+    }
+    .nick_set_button
+    {
+    display: inline-block;
+    position: absolute;
+    width:30%;
+    right: 3%; 
+    font-size: 1vw;
+    padding-left: 0;
+    padding-right: 0;
+    
+    }
+    .chat_list
+    {
+    margin: 1%;
+    height: 96%;
+    padding-left: 0;
+    overflow-y: scroll;
+    word-wrap: break-word;
+    max-height: 100%;
+    font-size: 1.5vw;
+    list-style-type: none;
+    }
+    #nick_label
+    {
+    margin-left: 3%;
     }
 
 </style>
