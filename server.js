@@ -1,17 +1,22 @@
-const express = require('express')
-const app = express()
-const http = require('http').createServer(app)
-const path = require('path')
-const io = require('socket.io')(http)
+var express = require('express');
+var app = express();
+var path = require('path');
 
+//Send static files
+app.use(express.static(__dirname + '/static'));
+
+//HTTP Server
+var server = app.listen(80,()=> console.log("Serwer uruchomiony na porcie 80"));
 app.get('/', (req,res )=> {
-    res.sendFile(path.join(__dirname,'/chat.html'))
+    res.sendFile(path.join(__dirname,'/chat.html'));
 })
-app.listen(80,()=> console.log("Serwer uruchomiony na porcie 80"))
+//Socket io
+var io = require('socket.io').listen(server);
+io.on('connection', function(user){
+    console.log('a user connected');
+    user.on('disconnect', function(){
+        console.log("User disconnected!");
+    })
+})
 
-io.on('connection', (socket)=>{
-    console.log("User connected")
-})
-io.on('disconnect', (socket) =>{
-    console.log("User disconnected")
-})
+
