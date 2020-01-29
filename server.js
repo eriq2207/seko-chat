@@ -12,11 +12,11 @@ app.get('/', (req,res )=> {
 })
 //Socket io
 var io = require('socket.io').listen(server);
-io.on('connection', function(user){
-    console.log('a user connected');
-    user.on('disconnect', function(){
-        console.log("User disconnected!");
-    })
-})
+//io.on('connection', function(user){
+//    console.log('a user connected');
+//    user.on('disconnect', function(){
+//        console.log("User disconnected!");
+//    })
+//})
 
 
