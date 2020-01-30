@@ -13,16 +13,22 @@
     <title>AF SEKO - czat</title>
   </head>
   <body class="bg-dark">
-    <div class="container-fluid p-0 chat_div rounded-lg">
-      <ul class="chat_list" id="chat_list_id"></ul>
+    <div class="container-fluid p-0 rounded-lg" id="chat_div">
+      <div class="container mt-3 rounded-lg" id="login_div">
+        <h1>Podaj swój podpis:</h1>
+        <form id="send_login_form">
+          <textarea class="form-control" id="send_login_textbox" placeholder="Wpisz swój podpis.."></textarea>
+          <button type="submit" class="btn btn-warning m-3" id="send_login_btn">Rozpocznij czat</button>
+        </form>
+      </div>
     </div>
     <div class="container-fluid p-0 users_div rounded-lg">
         <h1>UŻYTKOWNICY</h1>
     </div>
     <div class="container-fluid p-0 send_div rounded-lg">
       <form id="send_form">
-        <textarea class="form-control message_input h-75" id="send_textbox"placeholder="Napisz wiadomość.."></textarea>
-        <button type="submit" class="btn btn-warning button_send " id="send_btn">Wyślij</button>
+        <textarea class="form-control message_input h-75" id="send_textbox" disabled="true" placeholder="Napisz wiadomość.."></textarea>
+        <button type="submit" class="btn btn-warning button_send " disabled="true" id="send_btn">Wyślij</button>
       </form>
     </div>
     <div class="container-fluid p-0 settings_div rounded-lg">

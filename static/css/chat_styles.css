@@ -1,10 +1,9 @@
-.chat_div
+    #chat_div
     {
     display: inline-block;
     width: 80%;
     height: 85%;
     max-height: 85%;
-    min-height: 50%;
     position: absolute;
     left: 1%;
     top: 1%;
@@ -67,10 +66,10 @@
     width:10%;
     height: 70%;
     right: 2%;   
-    font-size: 1vw;
+    font-size: 1.5vw;
     padding: 0;
     }
-    .chat_list
+    #chat_list
     {
     margin: 1%;
     height: 96%;
@@ -80,4 +79,31 @@
     max-height: 100%;
     font-size: 15px;
     list-style-type: none;
+    }
+    #login_div
+    {
+    width: 30%;
+    min-height: 100px;
+    min-width:150px;
+    text-align: center;
+    vertical-align: middle;
+    background-color:rgb(57, 33, 163);
+    }
+    #send_login_btn
+    {
+    min-width: 70px;
+    min-height: 30px;
+    height: 10%;
+    width: 40%;
+    font-size: 1.5vw;
+    padding: 0;
+    margin: auto;
+    }
+    #send_login_textbox
+    {
+    font-size: 20px;
+    padding-top: 0;
+    padding-left: 1%;
+    height: 40px;
+    text-align: center;
     }
