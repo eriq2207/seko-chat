@@ -1,5 +1,6 @@
 function socket_init()
 {
+    var login='';
     //init socket io
     var socket = io();
     //Send message with Enter pressed
@@ -19,6 +20,7 @@ function socket_init()
     $('#send_login_form').submit(function(e){
       e.preventDefault();
       socket.emit('login data', $('#send_login_textbox').val());
+      login = $('#send_login_textbox').val();
     });
     //Receiving login status information
     socket.on('login status',function(msg){
@@ -28,10 +30,18 @@ function socket_init()
         addElement('chat_div','ul','chat_list','');
         $('#send_textbox').prop('disabled',false);
         $('#send_btn').prop('disabled',false);
+        $('#send_textbox').focus();
       }
       else
       {
-
+          login ='';
+          if(!$('#warning_id').length)
+          {
+            var warning = $('<p1>').text("Istnieje użytkownik o takim nicku");
+            warning.attr('id','warning_id');
+            warning.css('color', 'red');
+            $('#login_div').append(warning);
+          }
       }
     });
     //Sending message to server
@@ -43,7 +53,19 @@ function socket_init()
     });
     //Receiving message from server
     socket.on('chat message', function(msg){
-        $('#chat_list').append($('<li>').text(msg));
+
+        var el = $('<li>').text(msg);
+
+        var received_login = msg.split(':',1);
+        if(received_login==login)
+        {
+          el.css('color', 'white');
+          el.css('text-align','right');
+          el.css('padding-right','3%');
+        }
+
+        $('#chat_list').append(el);
+
         var list_obj = document.getElementById("chat_list");
         list_obj.scrollTop = list_obj.scrollHeight;
     });
