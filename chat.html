@@ -2,7 +2,7 @@
 <html lang="pl">
   <head></head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="/seko_icon.png">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/chat_styles.css" type="text/css">
@@ -16,15 +16,18 @@
   <body class="bg-dark">
     <div class="container-fluid p-0 rounded-lg" id="chat_div">
       <div class="container mt-3 rounded-lg" id="login_div">
-        <h1>Podaj swój podpis:</h1>
         <form id="send_login_form">
-          <textarea class="form-control" id="send_login_textbox" placeholder="Wpisz swój podpis.."></textarea>
-          <button type="submit" class="btn btn-warning m-3" id="send_login_btn">Rozpocznij czat</button>
+          <h1>Podaj swój login:</h1>
+          <input class="form-control send_textarea" id="send_login_textbox" placeholder="Wpisz swój login.."></textarea>
+          <h1>Podaj swoje hasło:</h1>
+          <input type="password" class="form-control send_textarea" id="send_password_textbox" placeholder="Wpisz swoje hasło.."></textarea>
+          <button type="submit" class="btn btn-warning m-3" id="send_login_btn">Zaloguj się</button>
         </form>
       </div>
     </div>
     <div class="container-fluid p-0 users_div rounded-lg">
         <h1>UŻYTKOWNICY</h1>
+        <ul id="users_list"></ul>
     </div>
     <div class="container-fluid p-0 send_div rounded-lg">
       <form id="send_form">
