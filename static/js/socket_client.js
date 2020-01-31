@@ -20,9 +20,18 @@ function socket_init()
     //Sending login data
     $('#send_login_form').submit(function(e){
       e.preventDefault();
-      socket.emit('login request', $('#send_login_textbox').val()+';'+$('#send_password_textbox').val());
-      login = $('#send_login_textbox').val();
+      $.post("login",{
+        username: $('#send_login_textbox').val(),
+        password: $('#send_password_textbox').val(),
+        id: socket.id,
+      })
+      //socket.emit('login request', $('#send_login_textbox').val()+';'+$('#send_password_textbox').val());
+      //login = $('#send_login_textbox').val();
     });
+    //Get socket session ID
+    socket.on('connect',()=>{
+      socket_session_id = socket.id;
+    })
     //Receiving login status information
     socket.on('login request status',function(msg){
       if(msg=='1')
