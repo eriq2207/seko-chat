@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 const saltRounds = 10;
 var actual_chat_users = [];
 
+setInterval(check_users_connection,io,actual_chat_users,10000);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/static'));
@@ -138,5 +140,17 @@ function all_message_update(user_id, io, sql_con)
             if (socket != null)
                 socket.emit('chat all message', msg);
         });
+    }
+}
+function check_users_connection(io, chat_users)
+{
+    for(var i=0;i<chat_users.length;i++)
+    {
+        var socket = io.sockets.connected[chat_users[i].id];
+        if(socket == null)
+        {
+            delete_user(chat_users,io,chat_users[i].login);
+            chat_users[i].splice(i,1);
+        }
     }
 }
