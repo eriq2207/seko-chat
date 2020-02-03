@@ -73,14 +73,11 @@ function socket_req_handling() {
   });
   //Receiving message from server
   socket.on('chat message', function (msg) {
-    console.log("Otrzymalem wiadomosc");
     var el = $('<li>').text(msg);
 
     var received_login = msg.split(':', 1);
     if (received_login == login) {
-      el.css('color', 'white');
-      el.css('text-align', 'right');
-      el.css('padding-right', '3%');
+      el.attr('class','chat_my_message');
     }
 
     $('#chat_list').append(el);
@@ -93,7 +90,7 @@ function socket_req_handling() {
     var users = msg.split(';', 200);
     var users_list = $('#users_list');
     users_list.empty();
-    for (i = 0; i < users.length -1; i++) {
+    for (i = 0; i < users.length - 1; i++) {
       var el = $('<li>').text(users[i]);
       users_list.append(el);
     }
@@ -116,16 +113,32 @@ function socket_req_handling() {
     chat_msg.css('color', 'blue');
     chat_list.append(chat_msg);
     var childs = user_list.children();
-    for(var i = 0;i<childs.length;i++)
-    {
+    for (var i = 0; i < childs.length; i++) {
       var child = childs[i];
-      if(child.textContent === msg)
-      {
+      if (child.textContent === msg) {
         child.remove();
         break;
       }
     }
   });
+  socket.on('chat all message', function (msg) {
+    var msg_array = msg.split(';');
+    for(var i=msg_array.length-2;i>=0;i--)
+    {
+      var msg_line = msg_array[i].split(',');
+      var chat_msg = $('<li>').text(msg_line[0]+': '+msg_line[1]);
+
+      if(msg_line[0]===login)
+        chat_msg.attr('class','chat_my_message');
+    
+    var list_obj = document.getElementById("chat_list");
+    var chat_list = $('#chat_list');
+    chat_list.append(chat_msg);
+    list_obj.scrollTop = list_obj.scrollHeight;
+    }
+  });
+  
+
 }
 function addElement(parentId, elementTag, elementId, html) {
   // Adds an element to the document

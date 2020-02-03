@@ -119,3 +119,9 @@
     max-height: 100%;
     font-size: 2vw;
     }
+    .chat_my_message
+    {
+      color: white;
+      text-align: right;
+      padding-right: 3%;
+    }

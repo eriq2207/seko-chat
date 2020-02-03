@@ -26,7 +26,7 @@ app.post('/login', (req, res) => {
     if (con.state === 'authenticated') {
         con.query(sql, (err, result) => {
             if (err) throw err;
-            if (result.length === 1 && username===result[0].login) {
+            if (result.length === 1 && username === result[0].login) {
                 bcrypt.compare(password, result[0].password, function (err, res) {
                     if (err) throw err;
                     if (res) {
@@ -36,10 +36,11 @@ app.post('/login', (req, res) => {
                         }
                         io.sockets.connected[id].emit('login request status', '1');
                         actual_chat_users.push(user);
-                        update_users(actual_chat_users,io, user.id);
-                        add_new_user(actual_chat_users,io, user.login, user.id);
+                        update_users(actual_chat_users, io, user.id);
+                        add_new_user(actual_chat_users, io, user.login, user.id);
+                        all_message_update(user.id, io, con);
                     }
-                    else 
+                    else
                         io.sockets.connected[id].emit('login request status', '0');
                 })
             }
@@ -71,8 +72,7 @@ io.on('connection', function (user) {
 
     user.on('disconnect', function () {
         var index = actual_chat_users.findIndex(obj => obj.id === user.id);
-        if(index >=0)
-        {
+        if (index >= 0) {
             var login = actual_chat_users[index].login;
             actual_chat_users.splice(index, 1);
             delete_user(actual_chat_users, io, login);
@@ -80,10 +80,16 @@ io.on('connection', function (user) {
     })
 
     user.on('chat message', function (msg) {
+
         var result = actual_chat_users.filter(obj => {
             return obj.id == user.id;
         })
         if (result.length === 1) {
+            var sql = "INSERT INTO seko_chat_msg (id, user, message, time) VALUES (NULL,'" + result[0].login + "','" + msg + "',"+"CURRENT_TIME())";
+            if (con.state === "authenticated")
+                con.query(sql, (err, result) => {
+                    if(err) console.log(err);
+                });
             for (i = 0; i < actual_chat_users.length; i++)
                 io.sockets.connected[actual_chat_users[i].id].emit('chat message', result[0].login + ': ' + msg);
         }
@@ -97,18 +103,40 @@ function update_users(actual_users, io, user_to_update_id) {
     io.sockets.connected[user_to_update_id].emit('users update', msg + ';');
 }
 function add_new_user(actual_users, io, user_add, user_ignore_id) {
-    for (var i = 0; i < actual_chat_users.length; i++)
-    {
+    for (var i = 0; i < actual_chat_users.length; i++) {
         var socket = io.sockets.connected[actual_users[i].id];
-        if(socket!=null && socket.id!=user_ignore_id)
+        if (socket != null && socket.id != user_ignore_id)
             socket.emit('user add', user_add);
     }
 }
 function delete_user(actual_users, io, user_delete) {
-    for (var i = 0; i < actual_chat_users.length; i++)
-    {
+    for (var i = 0; i < actual_chat_users.length; i++) {
         var socket = io.sockets.connected[actual_users[i].id];
-        if(socket!=null)
+        if (socket != null)
             socket.emit('user delete', user_delete);
+    }
+}
+function all_message_update(user_id, io, sql_con)
+{
+    var sql = "SELECT * FROM seko_chat_msg ORDER BY id DESC LIMIT 30";
+    if(sql_con.state ==="authenticated")
+    {
+        con.query(sql, (err, result) => {
+            if(err) console.log(err);
+            var msg = '';
+
+            for(var i=0;i<result.length;i++)
+            {
+                msg+=result[i].user;
+                msg+=',';
+                msg+=result[i].message;
+                msg+=',';
+                msg+=result[i].time;
+                msg+=';';
+            }
+            var socket = io.sockets.connected[user_id];
+            if (socket != null)
+                socket.emit('chat all message', msg);
+        });
     }
 }
