@@ -4,19 +4,24 @@ var path = require('path');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
+var fs = require('fs');
+var chat = require('./chat_module.js');
+
+const port = process.env.PORT || 3000;
+var server = app.listen(port, () => console.log("Serwer uruchomiony na porcie:" + port));
+var io = require('socket.io').listen(server);
 
 const saltRounds = 10;
-var actual_chat_users = [];
 
-setInterval(check_users_connection,io,actual_chat_users,10000);
+chat = new chat(io)
+
+setInterval(chat.check_users_connection, 10000);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/static'));
 
 //HTTP Server
-const port = process.env.PORT || 3000;
-var server = app.listen(port, () => console.log("Serwer uruchomiony na porcie:" + port));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/chat.html'));
 })
@@ -33,14 +38,14 @@ app.post('/login', (req, res) => {
                     if (err) throw err;
                     if (res) {
                         var user = {
-                            id: req.body.id,
-                            login: req.body.username,
+                            id: id,
+                            login: username,
                         }
                         io.sockets.connected[id].emit('login request status', '1');
-                        actual_chat_users.push(user);
-                        update_users(actual_chat_users, io, user.id);
-                        add_new_user(actual_chat_users, io, user.login, user.id);
-                        all_message_update(user.id, io, con);
+                        chat.actual_users.push(user);
+                        chat.update_all_users_to_one(user.id);
+                        chat.emit_new_user_to_all(user.login, user.id);
+                        chat.all_message_to_one_user_update(con,user.id);
                     }
                     else
                         io.sockets.connected[id].emit('login request status', '0');
@@ -57,100 +62,51 @@ app.post('/login', (req, res) => {
 
 
 //MySql connection
-var con = mysql.createConnection({
-    host: 'remotemysql.com',
-    port: 3306,
-    user: 'fmMb3PtZox',
-    password: 'HnCxMUYeT7',
-    database: 'fmMb3PtZox',
-})
-con.connect((err) => {
+var con;
+var config = fs.readFile('config.json', (err, data) => {
     if (err) throw err;
-    console.log("Połączono do bazy danych");
+    else {
+        var config_json = JSON.parse(data);
+        con = mysql.createConnection({
+            host: config_json.host,
+            port: config_json.port,
+            user: config_json.user,
+            password: config_json.password,
+            database: config_json.database
+        });
+        con.connect((err) => {
+            if (err) throw err;
+            console.log("Połączono do bazy danych");
+        })
+    }
 })
+
 //Socket io
-var io = require('socket.io').listen(server);
 io.on('connection', function (user) {
 
     user.on('disconnect', function () {
-        var index = actual_chat_users.findIndex(obj => obj.id === user.id);
+        var index = chat.actual_users.findIndex(obj => obj.id === user.id);
         if (index >= 0) {
-            var login = actual_chat_users[index].login;
-            actual_chat_users.splice(index, 1);
-            delete_user(actual_chat_users, io, login);
+            var login = chat.actual_users[index].login;
+            chat.actual_users.splice(index, 1);
+            chat.emit_deleted_user_to_all(login);
         }
     })
 
     user.on('chat message', function (msg) {
 
-        var result = actual_chat_users.filter(obj => {
+        var result = chat.actual_users.filter(obj => {
             return obj.id == user.id;
         })
         if (result.length === 1) {
-            var sql = "INSERT INTO seko_chat_msg (id, user, message, time) VALUES (NULL,'" + result[0].login + "','" + msg + "',"+"CURRENT_TIME())";
+            var sql = "INSERT INTO seko_chat_msg (id, user, message, time) VALUES (NULL,'" + result[0].login + "','" + msg + "'," + "CURRENT_TIME())";
             if (con.state === "authenticated")
                 con.query(sql, (err, result) => {
-                    if(err) console.log(err);
+                    if (err) console.log(err);
                 });
-            for (i = 0; i < actual_chat_users.length; i++)
-                io.sockets.connected[actual_chat_users[i].id].emit('chat message', result[0].login + ': ' + msg);
+            for (i = 0; i < chat.actual_users.length; i++)
+                io.sockets.connected[chat.actual_users[i].id].emit('chat message', result[0].login + ': ' + msg);
         }
 
     });
 })
-function update_users(actual_users, io, user_to_update_id) {
-    //Take login table from table of objects
-    var users_login = actual_users.map(a => a.login);
-    var msg = users_login.join(';');
-    io.sockets.connected[user_to_update_id].emit('users update', msg + ';');
-}
-function add_new_user(actual_users, io, user_add, user_ignore_id) {
-    for (var i = 0; i < actual_chat_users.length; i++) {
-        var socket = io.sockets.connected[actual_users[i].id];
-        if (socket != null && socket.id != user_ignore_id)
-            socket.emit('user add', user_add);
-    }
-}
-function delete_user(actual_users, io, user_delete) {
-    for (var i = 0; i < actual_chat_users.length; i++) {
-        var socket = io.sockets.connected[actual_users[i].id];
-        if (socket != null)
-            socket.emit('user delete', user_delete);
-    }
-}
-function all_message_update(user_id, io, sql_con)
-{
-    var sql = "SELECT * FROM seko_chat_msg ORDER BY id DESC LIMIT 30";
-    if(sql_con.state ==="authenticated")
-    {
-        con.query(sql, (err, result) => {
-            if(err) console.log(err);
-            var msg = '';
-
-            for(var i=0;i<result.length;i++)
-            {
-                msg+=result[i].user;
-                msg+=',';
-                msg+=result[i].message;
-                msg+=',';
-                msg+=result[i].time;
-                msg+=';';
-            }
-            var socket = io.sockets.connected[user_id];
-            if (socket != null)
-                socket.emit('chat all message', msg);
-        });
-    }
-}
-function check_users_connection(io, chat_users)
-{
-    for(var i=0;i<chat_users.length;i++)
-    {
-        var socket = io.sockets.connected[chat_users[i].id];
-        if(socket == null)
-        {
-            delete_user(chat_users,io,chat_users[i].login);
-            chat_users[i].splice(i,1);
-        }
-    }
-}

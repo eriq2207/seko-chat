@@ -17,6 +17,12 @@ function socket_req_handling() {
       e.preventDefault();
     }
   });
+  //Scroll chat down on data change
+  $("body").on('DOMSubtreeModified', "#chat_div", function () {
+    var list_obj = document.getElementById("chat_list");
+    if (list_obj != null)
+      list_obj.scrollTop = list_obj.scrollHeight;
+  });
   //Sending login data
   $('#send_login_form').submit(function (e) {
     e.preventDefault();
@@ -77,13 +83,10 @@ function socket_req_handling() {
 
     var received_login = msg.split(':', 1);
     if (received_login == login) {
-      el.attr('class','chat_my_message');
+      el.attr('class', 'chat_my_message');
     }
-
     $('#chat_list').append(el);
 
-    var list_obj = document.getElementById("chat_list");
-    list_obj.scrollTop = list_obj.scrollHeight;
   });
   //Update users list
   socket.on('users update', function (msg) {
@@ -123,21 +126,19 @@ function socket_req_handling() {
   });
   socket.on('chat all message', function (msg) {
     var msg_array = msg.split(';');
-    for(var i=msg_array.length-2;i>=0;i--)
-    {
+    for (var i = msg_array.length - 2; i >= 0; i--) {
       var msg_line = msg_array[i].split(',');
-      var chat_msg = $('<li>').text(msg_line[0]+': '+msg_line[1]);
+      var chat_msg = $('<li>').text(msg_line[0] + ': ' + msg_line[1]);
 
-      if(msg_line[0]===login)
-        chat_msg.attr('class','chat_my_message');
-    
-    var list_obj = document.getElementById("chat_list");
-    var chat_list = $('#chat_list');
-    chat_list.append(chat_msg);
-    list_obj.scrollTop = list_obj.scrollHeight;
+      if (msg_line[0] === login)
+        chat_msg.attr('class', 'chat_my_message');
+
+      var list_obj = document.getElementById("chat_list");
+      var chat_list = $('#chat_list');
+      chat_list.append(chat_msg);
     }
   });
-  
+
 
 }
 function addElement(parentId, elementTag, elementId, html) {
