@@ -1,9 +1,9 @@
 class Chat {
     constructor(socket_io, actual_users) {
-      this.socket = socket_io;
-      this.actual_users = [];
+        this.socket = socket_io;
+        this.actual_users = [];
     }
-  
+
     update_all_users_to_one = (user_to_update_id) => {
         var users_login = this.actual_users.map(a => a.login);
         var unique_users_login = [...new Set(users_login)];
@@ -22,7 +22,7 @@ class Chat {
             }
         }
     }
-    
+
     emit_deleted_user_to_all = (user_to_delete_login) => {
         var result = this.actual_users.filter(obj => {
             return obj.login == user_to_delete_login;
@@ -41,7 +41,7 @@ class Chat {
             sql_con.query(sql, (err, result) => {
                 if (err) console.log(err);
                 var msg = '';
-    
+
                 for (var i = 0; i < result.length; i++) {
                     msg += result[i].user;
                     msg += ',';
@@ -65,6 +65,28 @@ class Chat {
             }
         }
     }
-  }
-  
-  module.exports = Chat;
+    send_more_msg_to_user = (user_id, msg_offset, sql_con) => {
+        var sql = "SELECT * FROM seko_chat_msg ORDER BY id DESC LIMIT 20 OFFSET " + msg_offset + ";";
+        if (sql_con.state === "authenticated")
+            sql_con.query(sql, (err, result) => {
+                if (err) throw err;
+                else {
+                    var msg = '';
+
+                    for (var i = 0; i < result.length; i++) {
+                        msg += result[i].user;
+                        msg += ',';
+                        msg += result[i].message;
+                        msg += ',';
+                        msg += result[i].time;
+                        msg += ';';
+                    }
+                    var socket = this.socket.sockets.connected[user_id];
+                    if (socket != null)
+                        socket.emit('more messages', msg)
+                }
+            });
+    }
+}
+
+module.exports = Chat;

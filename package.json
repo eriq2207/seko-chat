@@ -1,22 +1,22 @@
 {
-  "name": "seko_chat",
-  "version": "1.0.0",
-  "description": "Application writen to test skills",
-  "main": "server.js",
-  "scripts": {
-    "devStart": "nodemon server.js"
-  },
-  "author": "EJ",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^3.0.7",
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "mysql": "^2.18.1",
-    "path": "^0.12.7",
-    "socket.io": "^2.3.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.2"
-  }
+    "name": "seko_chat",
+    "version": "1.0.0",
+    "description": "Application writen to test skills",
+    "main": "server.js",
+    "scripts": {
+        "devStart": "server.js"
+    },
+    "author": "EJ",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^3.0.7",
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1",
+        "mysql": "^2.18.1",
+        "path": "^0.12.7",
+        "socket.io": "^2.3.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.2"
+    }
 }
