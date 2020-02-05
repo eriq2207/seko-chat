@@ -37,24 +37,22 @@ class Chat {
     }
     all_message_to_one_user_update = (sql_con, user_to_update_id) => {
         var sql = "SELECT * FROM seko_chat_msg ORDER BY id DESC LIMIT 30";
-        if (sql_con.state === "authenticated") {
-            sql_con.query(sql, (err, result) => {
-                if (err) console.log(err);
-                var msg = '';
+        sql_con.query(sql, (err, result) => {
+            if (err) console.log(err);
+            var msg = '';
 
-                for (var i = 0; i < result.length; i++) {
-                    msg += result[i].user;
-                    msg += ',';
-                    msg += result[i].message;
-                    msg += ',';
-                    msg += result[i].time;
-                    msg += ';';
-                }
-                var socket = this.socket.sockets.connected[user_to_update_id];
-                if (socket != null)
-                    socket.emit('chat all message', msg);
-            });
-        }
+            for (var i = 0; i < result.length; i++) {
+                msg += result[i].user;
+                msg += ',';
+                msg += result[i].message;
+                msg += ',';
+                msg += result[i].time;
+                msg += ';';
+            }
+            var socket = this.socket.sockets.connected[user_to_update_id];
+            if (socket != null)
+                socket.emit('chat all message', msg);
+        });
     }
     check_users_connection = () => {
         for (var i = 0; i < this.actual_users.length; i++) {
@@ -67,25 +65,24 @@ class Chat {
     }
     send_more_msg_to_user = (user_id, msg_offset, sql_con) => {
         var sql = "SELECT * FROM seko_chat_msg ORDER BY id DESC LIMIT 20 OFFSET " + msg_offset + ";";
-        if (sql_con.state === "authenticated")
-            sql_con.query(sql, (err, result) => {
-                if (err) throw err;
-                else {
-                    var msg = '';
+        sql_con.query(sql, (err, result) => {
+            if (err) throw err;
+            else {
+                var msg = '';
 
-                    for (var i = 0; i < result.length; i++) {
-                        msg += result[i].user;
-                        msg += ',';
-                        msg += result[i].message;
-                        msg += ',';
-                        msg += result[i].time;
-                        msg += ';';
-                    }
-                    var socket = this.socket.sockets.connected[user_id];
-                    if (socket != null)
-                        socket.emit('more messages', msg)
+                for (var i = 0; i < result.length; i++) {
+                    msg += result[i].user;
+                    msg += ',';
+                    msg += result[i].message;
+                    msg += ',';
+                    msg += result[i].time;
+                    msg += ';';
                 }
-            });
+                var socket = this.socket.sockets.connected[user_id];
+                if (socket != null)
+                    socket.emit('more messages', msg)
+            }
+        });
     }
 }
 
