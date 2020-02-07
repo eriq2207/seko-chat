@@ -26,33 +26,65 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/chat.html'));
 })
 app.post('/login', (req, res) => {
+        var username = req.body.username;
+        var password = req.body.password;
+        var id = req.body.id;
+        var sql = "SELECT * FROM seko_chat_users WHERE login = '" + username + "'";
+        sql_con.query(sql, (err, result) => {
+            if (err) res.end('-1');
+            else if (result.length === 1 && username === result[0].login) {
+                bcrypt.compare(password, result[0].password, function(err, compare_res) {
+                    if (err) throw err;
+                    if (compare_res) {
+                        var user = {
+                            id: id,
+                            login: username,
+                        }
+                        chat.actual_users.push(user);
+                        chat.update_all_users_to_one(user.id);
+                        chat.emit_new_user_to_all(user.login, user.id);
+                        chat.all_message_to_one_user_update(sql_con, user.id);
+                        res.end('1');
+                    } else
+                        res.end('0');
+                })
+            } else
+                res.end('0');
+
+        })
+    })
+    //handling registration request
+app.post('/register', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
-    var id = req.body.id;
-    var sql = "SELECT * FROM seko_chat_users WHERE login = '" + username + "'";
+    var email = req.body.email;
+    var sql = "SELECT email FROM seko_chat_users WHERE email = '" + email + "'";
     sql_con.query(sql, (err, result) => {
-        if (err) res.end('-1');
-        else if (result.length === 1 && username === result[0].login) {
-            bcrypt.compare(password, result[0].password, function(err, compare_res) {
-                if (err) throw err;
-                if (compare_res) {
-                    var user = {
-                        id: id,
-                        login: username,
-                    }
-                    chat.actual_users.push(user);
-                    chat.update_all_users_to_one(user.id);
-                    chat.emit_new_user_to_all(user.login, user.id);
-                    chat.all_message_to_one_user_update(sql_con, user.id);
-                    res.end('1');
-                } else
-                    res.end('0');
-            })
-        } else
+        if (err) res.end('-2');
+        if (result.length > 0)
             res.end('0');
-
-    })
-})
+        else {
+            sql = "SELECT login FROM seko_chat_users WHERE login = '" + username + "'";
+            sql_con.query(sql, (err, result) => {
+                if (err) res.end('-2');
+                if (result.length > 0)
+                    res.end('-1');
+                else {
+                    if (password.length > 8) {
+                        bcrypt.hash(password, saltRounds, (err, hash) => {
+                            if (err) res.end('-2');
+                            sql = "INSERT INTO seko_chat_users (id, login, password, email) VALUES (NULL,'" + username + "','" + hash + "','" + email + "');"
+                            sql_con.query(sql, (err, result) => {
+                                if (err) res.end('-2');
+                                res.end('1');
+                            });
+                        });
+                    }
+                }
+            });
+        }
+    });
+});
 
 //MySql connection
 fs.readFile('config.json', (err, data) => {

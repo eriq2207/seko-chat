@@ -152,3 +152,21 @@
         border-radius: 2%;
         cursor: pointer;
     }
+    
+    #open_reg_form_id {
+        min-width: 70px;
+        min-height: 30px;
+        height: 10%;
+        width: 40%;
+        font-size: 1.5vw;
+        padding: 0;
+        margin: auto;
+    }
+    
+    #email_label {
+        display: none;
+    }
+    
+    #send_email_textbox {
+        display: none;
+    }

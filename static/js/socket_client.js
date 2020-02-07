@@ -4,6 +4,31 @@ function socket_req_handling() {
     //init socket io
     var socket = io();
     setInterval(check_connection, 1000, socket);
+    //Show register form
+    $('#open_reg_form_id').click(function() {
+        if ($('#email_label').css('display') == 'none') {
+            $('#login_label').text("Podaj login");
+            $('#password_label').text("Podaj hasło");
+            $('#email_label').css('display', 'block');
+            $('#send_email_textbox').css('display', 'block');
+            $('#send_login_btn').text("Zarejestruj się");
+            $('#open_reg_form_id').text("Zaloguj się");
+        } else {
+            $('#login_label').text("Podaj swój login");
+            $('#password_label').text("Podaj swoje hasło");
+            $('#email_label').css('display', 'none');
+            $('#send_email_textbox').css('display', 'none');
+            $('#send_login_btn').text("Zaloguj się");
+            $('#open_reg_form_id').text("Rejestracja");
+        }
+        if ($('#warning_id').length > 0)
+            $('#warning_id').remove();
+
+        $('#send_login_textbox').val('');
+        $('#send_password_textbox').val('');
+        $('#send_email_textbox').val('');
+
+    });
     //Send message with Enter pressed
     $('#send_textbox').keypress(function(e) {
         if (e.which == 13 && !e.shiftKey) {
@@ -31,45 +56,95 @@ function socket_req_handling() {
     $('#load_more_msg_id').on('click', () => {
             socket.emit('load_more_req', nr_of_msg);
         })
-        //Sending login data and handle response
+        //Sending login or registration data and handle response
     $('#send_login_form').submit(function(e) {
         e.preventDefault();
-        $.post("login", {
-                username: $('#send_login_textbox').val(),
-                password: $('#send_password_textbox').val(),
-                id: socket.id,
-            },
-            function(msg, status) {
-                switch (msg) {
-                    case '1':
-                        {
-                            login = $('#send_login_textbox').val();
-                            $('#login_div').css('display', 'none');
-                            $('#chat_list').css('display', 'block');
-                            $('#send_textbox').prop('disabled', false);
-                            $('#send_btn').prop('disabled', false);
-                            $('#send_textbox').focus();
-                        }
-                    case '0':
-                        {
-                            if (!$('#warning_id').length) {
-                                var warning = $('<p1>').text("Błędna nazwa użytkownika lub hasło");
+        if ($('#email_label').css('display') == 'none')
+            $.post("login", {
+                    username: $('#send_login_textbox').val(),
+                    password: $('#send_password_textbox').val(),
+                    id: socket.id,
+                },
+                function(msg, status) {
+                    switch (msg) {
+                        case '1':
+                            {
+                                login = $('#send_login_textbox').val();
+                                $('#login_div').css('display', 'none');
+                                $('#chat_list').css('display', 'block');
+                                $('#send_textbox').prop('disabled', false);
+                                $('#send_btn').prop('disabled', false);
+                                $('#send_textbox').focus();
+                            }
+                        case '0':
+                            {
+                                if (!$('#warning_id').length) {
+                                    var warning = $('<p1>').text("Błędna nazwa użytkownika lub hasło");
+                                    warning.attr('id', 'warning_id');
+                                    warning.css('color', 'red');
+                                    $('#login_div').append(warning);
+                                }
+                            }
+                        case '-1':
+                            {
+                                var warning = $('<p1>').text("Problem z połączeniem z bazą danych. Skontaktuj się z administratorem.");
                                 warning.attr('id', 'warning_id');
                                 warning.css('color', 'red');
-                                $('#login_div').append(warning);
+                                if (!$('#warning_id').length) {
+                                    $('#login_div').append(warning);
+                                }
                             }
+                    }
+                });
+        else {
+            if ($('#send_password_textbox').val().length < 9 || $('#send_login_textbox').val().length < 1) {
+                var warning = $('<p1>').text("Hasło powinno zawierać conajmniej 8 znaków");
+                warning.attr('id', 'warning_id');
+                warning.css('color', 'red');
+                if (!$('#warning_id').length)
+                    $('#login_div').append(warning);
+                else
+                    $('#warning_id').replaceWith(warning);
+            } else {
+                $.post("register", {
+                        username: $('#send_login_textbox').val(),
+                        password: $('#send_password_textbox').val(),
+                        email: $('#send_email_textbox').val(),
+                    },
+                    function(msg, status) {
+                        switch (msg) {
+                            case '1':
+                                {
+                                    var warning = $('<p1>').text("Rejestracja poprawna. Możesz się zalogować");
+                                    warning.attr('id', 'warning_id');
+                                    warning.css('color', 'green');
+                                    if (!$('#warning_id').length)
+                                        $('#login_div').append(warning);
+                                    else
+                                        $('#warning_id').replaceWith(warning);
+                                }
+                            case '0':
+                                {
+                                    if (!$('#warning_id').length) {
+                                        var warning = $('<p1>').text("Ten email jest już zajęty, podaj inny");
+                                        warning.attr('id', 'warning_id');
+                                        warning.css('color', 'red');
+                                        $('#login_div').append(warning);
+                                    }
+                                }
+                            case '-1':
+                                {
+                                    if (!$('#warning_id').length) {
+                                        var warning = $('<p1>').text("Błędna nazwa użytkownika lub hasło");
+                                        warning.attr('id', 'warning_id');
+                                        warning.css('color', 'red');
+                                        $('#login_div').append(warning);
+                                    }
+                                }
                         }
-                    case '-1':
-                        {
-                            var warning = $('<p1>').text("Problem z połączeniem z bazą danych. Skontaktuj się z administratorem.");
-                            warning.attr('id', 'warning_id');
-                            warning.css('color', 'red');
-                            if (!$('#warning_id').length) {
-                                $('#login_div').append(warning);
-                            }
-                        }
-                }
-            });
+                    });
+            }
+        }
     });
     //Sending message to server
     $('#send_form').submit(function(e) {

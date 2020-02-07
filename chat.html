@@ -22,12 +22,15 @@
         <div id="load_more_msg_id" class="load_more rounded-lg">Załaduj więcej wiadomości</div>
         <div class="container mt-3 rounded-lg" id="login_div">
             <form id="send_login_form">
-                <h1>Podaj swój login:</h1>
+                <h1 id="login_label">Podaj swój login:</h1 i>
                 <input class="form-control send_textarea" id="send_login_textbox" placeholder="Wpisz swój login.."></textarea>
-                <h1>Podaj swoje hasło:</h1>
+                <h1 id="password_label">Podaj swoje hasło:</h1>
                 <input type="password" class="form-control send_textarea" id="send_password_textbox" placeholder="Wpisz swoje hasło.."></textarea>
+                <h1 id="email_label">Podaj email</h1>
+                <input type="email" class="form-control send_textarea" id="send_email_textbox" placeholder="Wpisz swój email.."></textarea>
                 <button type="submit" class="btn btn-warning m-3" id="send_login_btn">Zaloguj się</button>
             </form>
+            <button type="submit" class="btn btn-warning m-3" id="open_reg_form_id">Rejestracja</button>
         </div>
     </div>
     <div class="container-fluid p-0 users_div rounded-lg">
