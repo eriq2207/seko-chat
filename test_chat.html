@@ -1,0 +1,245 @@
+<!doctype html>
+<html class='h-100'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="icon" href="/seko_icon.png">
+    <link rel="stylesheet" href="/css/nanoscroller.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="/js/jquery.nanoscroller.js"></script>
+    <title>AF SEKO - chat</title>
+</head>
+
+<body class='h-100' style="background-color: rgb(71, 71, 71);">
+    <div class='container h-100'>
+        <div class='row h-100 '>
+            <div class='col-sm-9 h-100 p-0'>
+                <div class=' container px-1 py-1 chat_div'>
+                    <div class='nano container bg-light rounded-lg h-100'>
+                        <div class='nano-content w-100 h-100'>
+                            <div class='container-fluid msg rounded-lg w-100 m-0 mt-2 '>
+                                <span class='msg_username'>Maciek</span>
+                                <span class='msg_date'>17:10</span>
+                                <span class='msg_text'>Wiadomość otrzymana od Maćka od asdsadsadsadsaasdasdadsadasdas asd  sadsad das dsasadsadasdsadsaasd sad sad sad asd sda</span>
+                            </div>
+                            <div class='container-fluid msg rounded-lg w-100 m-0 mt-2 '>
+                                <span class='msg_username'>Eryk</span>
+                                <span class='msg_date'>18:15</span>
+                                <span class='msg_text'>Wiadomość otrzymana od Erk od asdsadsadsadsaasdasdadsadasdas asd  sadsad das dsasadsadasdsadsaasd sad sad sad asd sda</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='container px-1 pb-1 send_msg_div'>
+                    <div class='container bg-light rounded-lg h-100 p-0'>
+                        <form class='form-inline w-100 h-100'>
+                            <textarea class=" rounded-lg send_textarea" placeholder="Napisz wiadomośc do wysłania.."></textarea>
+                            <img src="/send.png" class="img float-right send_photo" alt="Responsive image">
+                            <img class='expand_user' src='/user.png'>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-3 h-100 p-0 users_div'>
+                <div class='container py-1 px-0 h-100'>
+                    <div class='container bg-light rounded-lg p-0' style='display:table; height: 100%;'>
+                        <div class='container' style='display:table-row; width: 100%; height: 70px;'>
+                            <h1 class='users_header'>UŻYTKOWNICY ONLINE</h1>
+                            <textarea class='find_user rounded-lg' placeholder="Szukaj użytkownika.. "></textarea>
+                        </div>
+                        <div class='container' style='display:table-row;'>
+                            <div class='nano container'>
+                                <div class='nano-content w-100'>
+                                    <div class='user_div rounded-lg'><span class='user'>Eryk</span></div>
+                                    <div class='user_div rounded-lg'><span class='user'>Maciek</span></div>
+                                    <div class='user_div rounded-lg'><span class='user'>Wiola</span></div>
+                                    <div class='user_div rounded-lg'><span class='user'>Eryk2</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<style>
+    .chat_div {
+        position: absolute;
+        bottom: 81px;
+        top: 0px;
+    }
+    
+    .send_msg_div {
+        height: 81px;
+        bottom: 0px;
+        position: absolute;
+    }
+    
+    body {
+        overflow-y: scroll;
+    }
+    
+    .send_msg_btn {
+        width: 20%;
+        background-color: rgb(0, 205, 154);
+    }
+    
+    .send_photo {
+        width: 8%;
+        max-height: 70%;
+        margin: auto;
+        cursor: pointer;
+    }
+    
+    .send_textarea {
+        width: 85%;
+        margin: auto;
+        margin-right: 0;
+    }
+    
+    .msg {
+        background-color: rgb(236, 236, 236);
+    }
+    
+    .msg_username {
+        color: rgb(214, 18, 18);
+        font-weight: bold;
+    }
+    
+    .msg_date {
+        color: rgb(97, 90, 90);
+        float: right;
+    }
+    
+    .msg_text {
+        display: block;
+        font-size: 14px;
+    }
+    
+    .users_header {
+        text-align: center;
+        font-size: 2vw;
+        font-family: 'Courier New', Courier, monospace;
+        border-bottom: 2px solid #494949;
+        border-radius: 10px;
+    }
+    
+    .find_user {
+        width: 80%;
+        height: 30px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+    }
+    
+    .user {
+        font-size: 18px;
+    }
+    
+    .user_div {
+        width: 100%;
+        background-color: rgb(236, 236, 236);
+        padding-left: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .expand_user {
+        width: 10%;
+        display: none;
+        cursor: pointer;
+    }
+    
+    @media screen and (max-width: 575px) {
+        .users_div {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 0;
+            width: 0;
+        }
+        .users_header {
+            font-size: 4vw;
+        }
+        .expand_user {
+            display: block;
+            width: 8%;
+            margin: auto;
+        }
+        .send_textarea {
+            width: 70%;
+        }
+    }
+    
+    .nano {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .nano>.nano-content {
+        padding: 10px;
+        padding-right: 10px;
+    }
+    
+    .nano>.nano-pane {
+        background: #888;
+        margin-right: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .nano>.nano-pane>.nano-slider {
+        background: #111;
+        height: 80%;
+    }
+</style>
+<script>
+    $(".nano ").nanoScroller();
+    $(".expand_user").click(() => {
+        if ($(".users_div").css('width') == '0px')
+            animation_show_users_div();
+    });
+    $('.chat_div').click(() => {
+        if ($(".users_div").css('display') == 'block' && parseInt($(".users_div").css('width')) >= 200)
+            animation_hide_users_div();
+    })
+
+    function animation_show_users_div() {
+        var max_div_width = 200;
+        var show_time_ms = 500;
+        var frame_rate = 20;
+        var users_div = $(".users_div");
+        var users_div_width = parseInt(users_div.css('width'));
+        users_div.css('display', 'block');
+        if (users_div_width < max_div_width) {
+            var loop_time = show_time_ms / 1000 * frame_rate;
+            var add = max_div_width / loop_time;
+            users_div.css('width', users_div_width + add + 'px');
+            setTimeout(animation_show_users_div, 1000 / frame_rate);
+        }
+
+    }
+
+    function animation_hide_users_div() {
+        var max_div_width = 200;
+        var show_time_ms = 500;
+        var frame_rate = 30;
+        var users_div = $(".users_div");
+        var users_div_width = parseInt(users_div.css('width'));
+        if (users_div_width > 0) {
+            var loop_time = show_time_ms / 1000 * frame_rate;
+            var sub = max_div_width / loop_time;
+            users_div.css('width', users_div_width - sub + 'px');
+            setTimeout(animation_hide_users_div, 1000 / frame_rate);
+        } else
+            users_div.css('display', 'none');
+    }
+</script>
+
+</html>
