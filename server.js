@@ -58,6 +58,8 @@ app.post('/register', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     var email = req.body.email;
+    if (username == null || password == null || email == null)
+        res.end('-2');
     var sql = "SELECT email FROM seko_chat_users WHERE email = '" + email + "'";
     sql_con.query(sql, (err, result) => {
         if (err) res.end('-2');
@@ -108,20 +110,30 @@ io.on('connection', function(user) {
         }
     })
 
-    user.on('chat message', function(msg) {
+    user.on('chat message_sended', function(msg) {
 
-        var result = chat.actual_users.filter(obj => {
+        var res = chat.actual_users.filter(obj => {
             return obj.id == user.id;
-        })
-        if (result.length === 1) {
-            var sql = "INSERT INTO seko_chat_msg (id, user, message, time) VALUES (NULL,'" + result[0].login + "','" + msg + "'," + "CURRENT_TIME())";
+        });
+        if (res.length === 1) {
+            var msg_to_send = "";
+            var sql = "INSERT INTO seko_chat_msg (id, user, message, time) VALUES (NULL,'" + res[0].login + "','" + msg + "'," + "CURRENT_TIME())";
             sql_con.query(sql, (err, result) => {
-                if (err) console.log(err);
+                if (err) console.log(err)
+                else {
+                    msg_to_send = result.insertId + msg_to_send;
+                    msg_to_send = msg_to_send + ',';
+                    msg_to_send = msg_to_send + res[0].login;
+                    msg_to_send = msg_to_send + ',';
+                    msg_to_send = msg_to_send + msg;
+                    msg_to_send = msg_to_send + ',';
+                    var time = new Date();
+                    msg_to_send = msg_to_send + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+                    for (i = 0; i < chat.actual_users.length; i++)
+                        io.sockets.connected[chat.actual_users[i].id].emit('chat message', msg_to_send);
+                }
             });
-            for (i = 0; i < chat.actual_users.length; i++)
-                io.sockets.connected[chat.actual_users[i].id].emit('chat message', result[0].login + ': ' + msg);
         }
-
     });
     user.on('load_more_req', (msg) => {
         chat.send_more_msg_to_user(user.id, msg, sql_con);

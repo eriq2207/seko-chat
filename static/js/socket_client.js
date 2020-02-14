@@ -1,242 +1,94 @@
 function socket_req_handling() {
-    var login = '';
-    var nr_of_msg = 0;
+
     //init socket io
     var socket = io();
-    setInterval(check_connection, 1000, socket);
-    //Show register form
-    $('#open_reg_form_id').click(function() {
-        if ($('#email_label').css('display') == 'none') {
-            $('#login_label').text("Podaj login");
-            $('#password_label').text("Podaj hasło");
-            $('#email_label').css('display', 'block');
-            $('#send_email_textbox').css('display', 'block');
-            $('#send_login_btn').text("Zarejestruj się");
-            $('#open_reg_form_id').text("Zaloguj się");
-        } else {
-            $('#login_label').text("Podaj swój login");
-            $('#password_label').text("Podaj swoje hasło");
-            $('#email_label').css('display', 'none');
-            $('#send_email_textbox').css('display', 'none');
-            $('#send_login_btn').text("Zaloguj się");
-            $('#open_reg_form_id').text("Rejestracja");
-        }
-        if ($('#warning_id').length > 0)
-            $('#warning_id').remove();
+    //setInterval(check_connection, 1000, socket);
 
-        $('#send_login_textbox').val('');
-        $('#send_password_textbox').val('');
-        $('#send_email_textbox').val('');
-
-    });
     //Send message with Enter pressed
-    $('#send_textbox').keypress(function(e) {
-        if (e.which == 13 && !e.shiftKey) {
-            $('#send_form').submit();
-            e.preventDefault();
-        }
+    $('.send_textarea').keypress(function(e) {
+        if (e.which == 13 && !e.shiftKey)
+            send_msg(socket);
     });
-    //Send login with Enter pressed
-    $('#send_login_textbox').keypress(function(e) {
-        if (e.which == 13 && !e.shiftKey) {
-            $('#send_login_form').submit();
-            e.preventDefault();
-        }
+    //Sending message after button click
+    $('.send_photo').click(() => {
+        send_msg(socket);
     });
-    //Show load more when scrolled to top
-    document.getElementById('chat_list').onscroll = () => {
-            var pos = document.getElementById('chat_list').scrollTop;
-            var show_more_window = $('#load_more_msg_id');
-            if (pos > 10)
-                show_more_window.css('display', 'none');
-            else
-                show_more_window.css('display', 'block');
-        }
-        //Load more messages on click
-    $('#load_more_msg_id').on('click', () => {
-            socket.emit('load_more_req', nr_of_msg);
-        })
-        //Sending login or registration data and handle response
-    $('#send_login_form').submit(function(e) {
-        e.preventDefault();
-        if ($('#email_label').css('display') == 'none')
-            $.post("login", {
-                    username: $('#send_login_textbox').val(),
-                    password: $('#send_password_textbox').val(),
-                    id: socket.id,
-                },
-                function(msg, status) {
-                    switch (msg) {
-                        case '1':
-                            {
-                                login = $('#send_login_textbox').val();
-                                $('#login_div').css('display', 'none');
-                                $('#chat_list').css('display', 'block');
-                                $('#send_textbox').prop('disabled', false);
-                                $('#send_btn').prop('disabled', false);
-                                $('#send_textbox').focus();
-                            }
-                        case '0':
-                            {
-                                if (!$('#warning_id').length) {
-                                    var warning = $('<p1>').text("Błędna nazwa użytkownika lub hasło");
-                                    warning.attr('id', 'warning_id');
-                                    warning.css('color', 'red');
-                                    $('#login_div').append(warning);
-                                }
-                            }
-                        case '-1':
-                            {
-                                var warning = $('<p1>').text("Problem z połączeniem z bazą danych. Skontaktuj się z administratorem.");
-                                warning.attr('id', 'warning_id');
-                                warning.css('color', 'red');
-                                if (!$('#warning_id').length) {
-                                    $('#login_div').append(warning);
-                                }
-                            }
-                    }
-                });
-        else {
-            if ($('#send_password_textbox').val().length < 9 || $('#send_login_textbox').val().length < 1) {
-                var warning = $('<p1>').text("Hasło powinno zawierać conajmniej 8 znaków");
-                warning.attr('id', 'warning_id');
-                warning.css('color', 'red');
-                if (!$('#warning_id').length)
-                    $('#login_div').append(warning);
-                else
-                    $('#warning_id').replaceWith(warning);
-            } else {
-                $.post("register", {
-                        username: $('#send_login_textbox').val(),
-                        password: $('#send_password_textbox').val(),
-                        email: $('#send_email_textbox').val(),
-                    },
-                    function(msg, status) {
-                        switch (msg) {
-                            case '1':
-                                {
-                                    var warning = $('<p1>').text("Rejestracja poprawna. Możesz się zalogować");
-                                    warning.attr('id', 'warning_id');
-                                    warning.css('color', 'green');
-                                    if (!$('#warning_id').length)
-                                        $('#login_div').append(warning);
-                                    else
-                                        $('#warning_id').replaceWith(warning);
-                                }
-                            case '0':
-                                {
-                                    if (!$('#warning_id').length) {
-                                        var warning = $('<p1>').text("Ten email jest już zajęty, podaj inny");
-                                        warning.attr('id', 'warning_id');
-                                        warning.css('color', 'red');
-                                        $('#login_div').append(warning);
-                                    }
-                                }
-                            case '-1':
-                                {
-                                    if (!$('#warning_id').length) {
-                                        var warning = $('<p1>').text("Błędna nazwa użytkownika lub hasło");
-                                        warning.attr('id', 'warning_id');
-                                        warning.css('color', 'red');
-                                        $('#login_div').append(warning);
-                                    }
-                                }
-                        }
-                    });
-            }
-        }
+    //Send login data after button click
+    $('#login_btn').click(() => {
+        send_login_register_form(socket.id);
     });
-    //Sending message to server
-    $('#send_form').submit(function(e) {
-        e.preventDefault(); // prevents page reloading
-        var msg = $('#send_textbox').val();
-        if (msg != '')
-            socket.emit('chat message', $('#send_textbox').val());
-        $('#send_textbox').val('');
-        return false;
+    //Send login and registration with Enter pressed
+    $('.form').keypress(function(e) {
+        if (e.which == 13 && !e.shiftKey)
+            send_login_register_form(socket.id);
+    });
+    //Load more messages after top scroll
+    $(".nano").bind("scrolltop", function() {
+        var list_obj = $(".chat_list");
+        var id = list_obj.children().eq(1).attr('id');
+        socket.emit('load_more_req', id);
     });
     //Receiving more messages from server
     socket.on('more messages', function(msg) {
-        var msg_array = msg.split(';');
-        for (var i = 0; i < msg_array.length - 1; i++) {
-            var msg_line = msg_array[i].split(',');
-            var chat_msg = $('<li>').text(msg_line[0] + ': ' + msg_line[1]);
-
-            if (msg_line[0] === login)
-                chat_msg.attr('class', 'chat_my_message');
-
-            var list_obj = document.getElementById("chat_list");
-            var chat_list = $('#chat_list');
-            chat_list.prepend(chat_msg);
-            nr_of_msg++;
-        }
-    })
-
-    //Receiving message from server
+            var msg_array = msg.split(';');
+            var id_el = msg_array[msg_array.length - 2].split(',')[0];
+            id_el++;
+            for (var i = msg_array.length - 2; i > 0; i--) {
+                append_msg(msg_array[i], true);
+            }
+            $(".nano").nanoScroller({ scrollTo: $('#' + id_el) });
+        })
+        //Receiving message from server
     socket.on('chat message', function(msg) {
-        var el = $('<li>').text(msg);
-
-        var received_login = msg.split(':', 1);
-        if (received_login == login) {
-            el.attr('class', 'chat_my_message');
-        }
-        $('#chat_list').append(el);
-        nr_of_msg++;
-        scroll_list_down();
-
+        append_msg(msg);
     });
     //Update users list
     socket.on('users update', function(msg) {
         var users = msg.split(';', 200);
-        var users_list = $('#users_list');
+        var users_list = $('#users_div');
         users_list.empty();
-        for (i = 0; i < users.length - 1; i++) {
-            var el = $('<li>').text(users[i]);
-            users_list.append(el);
-        }
+        for (i = 0; i < users.length - 1; i++)
+            append_user(users[i]);
     });
     socket.on('user add', function(msg) {
-        var chat_msg = $('<li>').text(msg + ' dołączył/a do czatu');
-        var user_msg = $('<li>').text(msg);
-        var user_list = $('#users_list');
-        var chat_list = $('#chat_list');
-
-        chat_msg.css('color', 'blue');
-
-        user_list.append(user_msg);
-        chat_list.append(chat_msg);
-        scroll_list_down();
+        var msg_div = $('<div>');
+        msg_div.attr("class", "container-fluid msg rounded-lg w-100 m-0 mt-2");
+        var hours = new Date().getHours();
+        var minutes = new Date().getMinutes();
+        var seconds = new Date().getSeconds();
+        var span = $('<span>').text(msg + " dołączył/a do czatu!");
+        var span_time = $('<span>').text(hours + ':' + minutes + ':' + seconds);
+        span_time.css('float', 'right');
+        var list_obj = $(".chat_list");
+        msg_div.append(span);
+        msg_div.append(span_time);
+        list_obj.append(msg_div);
+        append_user(msg);
+        $(".nano").nanoScroller();
+        $(".nano").nanoScroller({ scroll: 'bottom' });
     });
     socket.on('user delete', function(msg) {
-        var chat_msg = $('<li>').text(msg + ' opuścił/a czat');
-        var chat_list = $('#chat_list');
-        var user_list = $('#users_list');
-        chat_msg.css('color', 'blue');
-        chat_list.append(chat_msg);
-        scroll_list_down();
-        var childs = user_list.children();
-        for (var i = 0; i < childs.length; i++) {
-            var child = childs[i];
-            if (child.textContent === msg) {
-                child.remove();
-                break;
-            }
-        }
+        var msg_div = $('<div>');
+        msg_div.attr("class", "container-fluid msg rounded-lg w-100 m-0 mt-2");
+        var hours = new Date().getHours();
+        var minutes = new Date().getMinutes();
+        var seconds = new Date().getSeconds();
+        var span = $('<span>').text(msg + " opuścił/a czat!");
+        var span_time = $('<span>').text(hours + ':' + minutes + ':' + seconds);
+        span_time.css('float', 'right');
+        var list_obj = $(".chat_list");
+        msg_div.append(span);
+        msg_div.append(span_time);
+        list_obj.append(msg_div);
+        delete_user(msg);
+        $(".nano").nanoScroller();
+        $(".nano").nanoScroller({ scroll: 'bottom' });
     });
+
     socket.on('chat all message', function(msg) {
         var msg_array = msg.split(';');
         for (var i = msg_array.length - 2; i >= 0; i--) {
-            var msg_line = msg_array[i].split(',');
-            var chat_msg = $('<li>').text(msg_line[0] + ': ' + msg_line[1]);
-
-            if (msg_line[0] === login)
-                chat_msg.attr('class', 'chat_my_message');
-
-            var list_obj = document.getElementById("chat_list");
-            var chat_list = $('#chat_list');
-            chat_list.append(chat_msg);
-            nr_of_msg++;
-            scroll_list_down();
+            append_msg(msg_array[i]);
         }
     });
 }
@@ -253,10 +105,140 @@ function check_connection(socket) {
     }
 }
 
-function scroll_list_down() {
-    $("body").on('DOMSubtreeModified', "#chat_div", function() {
-        var list_obj = document.getElementById("chat_list");
-        if (list_obj != null)
-            list_obj.scrollTop = list_obj.scrollHeight;
-    });
+function send_login_register_form(socket_id) {
+    if ($('#email').css('display') == 'none') {
+        $.post("login", {
+                username: $('#username').val(),
+                password: $('#password').val(),
+                id: socket_id,
+            },
+            function(msg, status) {
+                switch (msg) {
+                    case '1':
+                        {
+                            $('.login').css('display', 'none');
+                            $('.find_user').prop('disabled', false);
+                            $('.send_textarea').prop('disabled', false);
+                            $('.expand_user').prop('disabled', false);
+                            $('.send_textarea').focus();
+                            break;
+                        }
+                    case '0':
+                        {
+                            var info = $('.information');
+                            info.text("Błędna nazwa uzytkownika lub hasło!");
+                            info.css('color', 'red');
+                            break;
+                        }
+                    case '-1':
+                        {
+                            var info = $('.information');
+                            info.text("Problem z połączeniem z bazą danych. Skontaktuj się z administratorem!");
+                            info.css('color', 'red');
+                            break;
+                        }
+                }
+            });
+    } else {
+        if ($('#password').val().length < 7 || $('#username').val().length < 7) {
+            var info = $('.information');
+            info.text("Login i hasło powinny zawierać conajmniej 6 znaków!");
+            info.css('color', 'red');
+        } else {
+            $.post("register", {
+                    username: $('#username').val(),
+                    password: $('#password').val(),
+                    email: $('#email').val(),
+                },
+                function(msg, status) {
+                    switch (msg) {
+                        case '1':
+                            {
+                                var info = $('.information');
+                                info.text("Rejestracja udana. Możesz się zalogować!");
+                                info.css('color', 'green');
+                                break;
+                            }
+                        case '0':
+                            {
+                                var info = $('.information');
+                                info.text("Istnieje użytkownik z podanym adresem email!");
+                                info.css('color', 'red');
+                                break;
+                            }
+                        case '-1':
+                            {
+                                var info = $('.information');
+                                info.text("Istnieje użytkownik o takiej nazwie. Wybierz inną!");
+                                info.css('color', 'red');
+                                break;
+                            }
+                        case '-2':
+                            {
+                                var info = $('.information');
+                                info.text("Problem z połączeniem z bazą danych. Skontaktuj się z administratorem!");
+                                info.css('color', 'red');
+                                break;
+                            }
+                    }
+                }
+            );
+        }
+    }
+}
+
+function send_msg(socket) {
+    var msg = $('.send_textarea').val();
+    if (msg != '')
+        socket.emit('chat message_sended', msg);
+    $('.send_textarea').val('');
+}
+
+function append_msg(msg_string, more_msg) {
+    var msg_line = msg_string.split(',');
+    var id = msg_line[0];
+    var user = $('<span>').text(msg_line[1]);
+    user.attr('class', 'msg_username');
+    msg_line[2].replace('\n', "<br />");
+    var msg_text = $('<span>').text(msg_line[2])
+    msg_text.attr('class', 'msg_text');
+    var time = $('<span>').text(msg_line[3]);
+    time.attr('class', 'msg_date');
+
+    var msg_div = $('<div>');
+    msg_div.attr("class", "container-fluid msg rounded-lg w-100 m-0 mt-2");
+    msg_div.attr("id", id);
+    msg_div.append(user);
+    msg_div.append(time);
+    msg_div.append(msg_text);
+    var list_obj = $(".chat_list");
+    if (more_msg)
+        msg_div.insertBefore('.msg:first');
+    else
+        list_obj.append(msg_div);
+    $(".nano").nanoScroller();
+    $(".nano").nanoScroller({ scroll: 'bottom' });
+}
+
+function append_user(user) {
+    var users_list = $('#users_div');
+    var user_div = $('<div>').attr('class', 'user_div rounded-lg');
+    var user_span = $('<span>').attr('class', 'user');
+    user_span.text(user);
+    user_div.append(user_span);
+    users_list.append(user_div);
+    $(".nano2").nanoScroller();
+    $(".nano2").nanoScroller({ scroll: 'top' });
+
+}
+
+function delete_user(user) {
+    var user_list = $('.user_div');
+    for (var i = 0; i < user_list.length; i++) {
+        var user_span = user_list[i].firstChild.textContent;
+        if (user_span == user)
+            user_list[i].remove();
+    }
+    $(".nano2").nanoScroller();
+    $(".nano2").nanoScroller({ scroll: 'top' });
 }

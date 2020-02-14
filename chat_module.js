@@ -42,6 +42,8 @@ class Chat {
             var msg = '';
 
             for (var i = 0; i < result.length; i++) {
+                msg += result[i].id;
+                msg += ',';
                 msg += result[i].user;
                 msg += ',';
                 msg += result[i].message;
@@ -63,14 +65,16 @@ class Chat {
             }
         }
     }
-    send_more_msg_to_user = (user_id, msg_offset, sql_con) => {
-        var sql = "SELECT * FROM seko_chat_msg ORDER BY id DESC LIMIT 20 OFFSET " + msg_offset + ";";
+    send_more_msg_to_user = (user_id, msg_id, sql_con) => {
+        var sql = "SELECT * FROM seko_chat_msg WHERE id<" + msg_id + " AND id>" + (msg_id - 20) + ";";
         sql_con.query(sql, (err, result) => {
             if (err) throw err;
             else {
                 var msg = '';
 
                 for (var i = 0; i < result.length; i++) {
+                    msg += result[i].id;
+                    msg += ',';
                     msg += result[i].user;
                     msg += ',';
                     msg += result[i].message;

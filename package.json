@@ -4,7 +4,7 @@
     "description": "Application writen to test skills",
     "main": "server.js",
     "scripts": {
-        "devStart": "server.js"
+        "devStart": "nodemon server.js"
     },
     "author": "EJ",
     "license": "ISC",
