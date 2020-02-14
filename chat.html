@@ -1,54 +1,77 @@
 <!doctype html>
-<html lang="pl">
+<html class='h-100'>
 
-<head></head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="/seko_icon.png">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<link rel="stylesheet" href="/css/chat_styles.css" type="text/css">
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/socket_client.js"></script>
-<title>AF SEKO - czat</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="icon" href="/seko_icon.png">
+    <link rel="stylesheet" href="/css/nanoscroller.css">
+    <link rel="stylesheet" href="/css/chat_styles.css" type="text/css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="/js/jquery.nanoscroller.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket_client.js"></script>
+    <script src="/js/page_animations.js"></script>
+    <title>AF SEKO - chat</title>
 </head>
 
-<body class="bg-dark">
-    <div class="container-fluid p-0 rounded-lg" id="chat_div">
-        <ul id="chat_list"></ul>
-        <div id="load_more_msg_id" class="load_more rounded-lg">Załaduj więcej wiadomości</div>
-        <div class="container mt-3 rounded-lg" id="login_div">
-            <form id="send_login_form">
-                <h1 id="login_label">Podaj swój login:</h1 i>
-                <input class="form-control send_textarea" id="send_login_textbox" placeholder="Wpisz swój login.."></textarea>
-                <h1 id="password_label">Podaj swoje hasło:</h1>
-                <input type="password" class="form-control send_textarea" id="send_password_textbox" placeholder="Wpisz swoje hasło.."></textarea>
-                <h1 id="email_label">Podaj email</h1>
-                <input type="email" class="form-control send_textarea" id="send_email_textbox" placeholder="Wpisz swój email.."></textarea>
-                <button type="submit" class="btn btn-warning m-3" id="send_login_btn">Zaloguj się</button>
-            </form>
-            <button type="submit" class="btn btn-warning m-3" id="open_reg_form_id">Rejestracja</button>
+<body class='h-100' style="background-color: rgb(71, 71, 71);overflow-x: hidden;">
+    <div class='container h-100'>
+        <div class='row h-100 '>
+            <div class='col-sm-9 h-100 p-0'>
+                <div class=' container px-1 py-1 chat_div'>
+                    <div class='nano container bg-light rounded-lg h-100'>
+                        <div class='nano-content chat_list w-100 h-100'>
+                            <div class='container login bg-light'>
+                                <h1 class='login' id="login_header">Zaloguj się</h1>
+                                <form>
+                                    <input class=" rounded-lg form" id='username' placeholder="Podaj nazwe użytkownika.."></textarea>
+                                    <input type="password" class=" rounded-lg form" id='password' placeholder="Podaj hasło.."></textarea>
+                                    <input type="email" class=" rounded-lg form" id='email' style='display: none;' placeholder="Podaj email.."></textarea>
+                                    <button type="button" class="btn btn-secondary login" id='login_btn'>Zaloguj się</button>
+                                    <button type="button" class="btn btn-secondary rejestracja" id="rejestracja_btn">Rejestracja</button>
+                                </form>
+                                <span class='information'></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='container px-1 pb-1 send_msg_div'>
+                    <div class='container bg-light rounded-lg h-100 p-0'>
+                        <form class='form-inline w-100 h-100 msg_form'>
+                            <textarea class=" rounded-lg send_textarea" placeholder="Napisz wiadomośc do wysłania.." disabled='true'></textarea>
+                            <img src="/send.png" class="img float-right send_photo" disabled='true' alt="Responsive image">
+                            <img class='expand_user' src='/user.png' disabled='true'>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-3 h-100 p-0 users_div'>
+                <div class='container py-1 px-0 h-100'>
+                    <div class='container bg-light rounded-lg p-0' style='display:table; height: 100%;'>
+                        <div class='container' style='display:table-row; width: 100%; height: 70px;'>
+                            <h1 class='users_header'>UŻYTKOWNICY ONLINE</h1>
+                            <textarea class='find_user rounded-lg' disabled='true' placeholder="Szukaj użytkownika.. "></textarea>
+                        </div>
+                        <div class='container' style='display:table-row;'>
+                            <div class='nano_users container'>
+                                <div class='nano-content w-100' id='users_div'></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="container-fluid p-0 users_div rounded-lg">
-        <h1>UŻYTKOWNICY</h1>
-        <ul id="users_list"></ul>
-    </div>
-    <div class="container-fluid p-0 send_div rounded-lg">
-        <form id="send_form">
-            <textarea class="form-control message_input h-75" id="send_textbox" disabled="true" placeholder="Napisz wiadomość.."></textarea>
-            <button type="submit" class="btn btn-warning button_send " disabled="true" id="send_btn">Wyślij</button>
-        </form>
-    </div>
-    <div class="container-fluid p-0 settings_div rounded-lg">
-        <h1>USTAWIENIA</h1>
-    </div>
-    <script>
-        page_animations();
-    </script>
+
 </body>
+<script>
+    page_animations();
+    socket_req_handling();
+</script>
 
 </html>

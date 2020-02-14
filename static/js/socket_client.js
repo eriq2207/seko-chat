@@ -2,8 +2,21 @@ function socket_req_handling() {
 
     //init socket io
     var socket = io();
-    //setInterval(check_connection, 1000, socket);
+    setInterval(check_connection, 1000, socket);
 
+    //Find user
+    $('.find_user').bind('input propertychange', function() {
+        var text = $('.find_user').val();
+        var users_array = $('.user_div');
+        for (var i = 0; i < users_array.length; i++) {
+            var span = users_array[i].firstChild.textContent;
+            if (span.startsWith(text))
+                users_array[i].style.display = 'block';
+            else
+                users_array[i].style.display = 'none';
+
+        }
+    });
     //Send message with Enter pressed
     $('.send_textarea').keypress(function(e) {
         if (e.which == 13 && !e.shiftKey)
@@ -95,13 +108,17 @@ function socket_req_handling() {
 
 function check_connection(socket) {
 
-    if (!socket.connected && !($('#con_err_msg').length)) {
-        var el = $('<li>').text("Problem z połączeniem z serwerem.. odśwież strone i zaloguj się ponownie");
-        el.css('color', 'red');
-        el.css('text-align', 'center');
-        el.attr('id', 'con_err_msg');
-        $('#chat_list').append(el);
-        scroll_list_down();
+    if (!socket.connected && !$('#con_err_msg').length) {
+        var msg_div = $('<div>');
+        msg_div.attr('id', 'con_err_msg');
+        msg_div.attr("class", "container-fluid msg rounded-lg w-100 m-0 mt-2");
+        var span = $('<span>').text("Problem z połączeniem z serwerem. Odśwież stronę i zaloguj się ponownie!");
+        span.css('color', 'red');
+        var list_obj = $(".chat_list");
+        msg_div.append(span);
+        list_obj.append(msg_div);
+        $(".nano").nanoScroller();
+        $(".nano").nanoScroller({ scroll: 'bottom' });
     }
 }
 

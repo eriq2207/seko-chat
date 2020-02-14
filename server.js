@@ -23,7 +23,7 @@ app.use(express.static(__dirname + '/static'));
 
 //HTTP Server
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/test_chat.html'));
+    res.sendFile(path.join(__dirname, '/chat.html'));
 })
 app.post('/login', (req, res) => {
         var username = req.body.username;
